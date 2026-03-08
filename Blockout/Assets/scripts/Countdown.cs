@@ -1,56 +1,55 @@
 using System.Collections;
 using UnityEngine;
 
-public class CircleScaler : MonoBehaviour
+public class Countdown : MonoBehaviour
 {
-
-    public float timerDuration=30f;
+    public float timerDuration = 30f;
     private float timer;
-    public Transform target;
-    public float maxRadius = 30f; //starting size
-    public float minRadius = 0f; //ending size
+
+    public float maxRadius = 30f;
+    public float minRadius = 0f;
+
     public bool GameOver;
     public GameObject GameOverPanel;
-  
 
+    private Light playerLight;
 
-    void Awake()
+    private bool coroutineStarted = false;
+
+    void Start()
     {
-        
+        timer = timerDuration;
+        playerLight = GetComponent<Light>();
     }
-    private void Start()
-    {
-timer=timerDuration;
-    }
-    private void Update()
+
+    void Update()
     {
         timer -= Time.deltaTime;
-        target = GetComponent<Transform>();
-
-        if (timer > 0.5)
-        {
-            GameOver = false;
-            Debug.Log("tout va bien");
-            GameOverPanel.SetActive(false);
-
-        }
-
-        if (timer <= 0.5)
-        {
-           StartCoroutine(TimerZero());
-        }
 
         float timerPercentage = timer / timerDuration;
-        float newRadius = Mathf.Lerp(minRadius, maxRadius, timerPercentage);// ici on doit trouver un moyen d'influencer l'intensité de la lumière plutôt que son scale
 
-        transform.localScale = new Vector3(newRadius, newRadius, 1f);
+        // Réduction du rayon et de l'intensité
+        playerLight.range = Mathf.Lerp(minRadius, maxRadius, timerPercentage);
+        playerLight.intensity = Mathf.Lerp(1f, 0f, 1 - timerPercentage);
+
+        if (timer > 0.5f)
+        {
+            GameOver = false;
+            GameOverPanel.SetActive(false);
+        }
+        else if (!coroutineStarted)
+        {
+            StartCoroutine(TimerZero());
+            coroutineStarted = true;
+        }
     }
+
     IEnumerator TimerZero()
     {
         timer = 0;
         yield return new WaitForSeconds(0.5f);
+
         GameOver = true;
         GameOverPanel.SetActive(true);
-    }  
     }
-
+}
