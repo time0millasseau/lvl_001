@@ -41,7 +41,7 @@ timer=timerDuration;
         }
 
         float timerPercentage = timer / timerDuration;
-        float newRadius = Mathf.Lerp(minRadius, maxRadius, timerPercentage);
+        float newRadius = Mathf.Lerp(minRadius, maxRadius, timerPercentage);// ici on doit trouver un moyen d'influencer l'intensité de la lumière plutôt que son scale
 
         transform.localScale = new Vector3(newRadius, newRadius, 1f);
     }
